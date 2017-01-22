@@ -1,0 +1,24 @@
+git init
+
+git clone
+
+git checkout
+git checkout master
+
+git log
+
+git status
+
+git diff
+git diff --staged
+git diff commitID1 commitID2
+
+git add
+
+git commit
+
+git config --global user.name "David Shope"
+git config --global user.email "your_email@example.com"
+git config --global core.editor "subl -n -w"
+git config --global push.default upstream
+git config --global merge.conflictstyle diff3
