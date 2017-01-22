@@ -17,6 +17,11 @@ change?
 What are some situations when branches would be helpful in keeping your history
 organized? How would branches help?
 
+	-If you want to implement a new feature but are not sure if you would like to incorporate it yet
+	-Any time you want to keep distinct versions of code in parallel
+
+	Using branches for these cases keep your history more logically consistent than having just one line of commits
+
 How do the diagrams help you visualize the branch structure?
 
 What is the result of merging two branches together? Why do we represent it in
