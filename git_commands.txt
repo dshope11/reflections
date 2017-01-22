@@ -4,18 +4,24 @@ git clone
 
 git checkout
 git checkout master
+git checkout -b new_branch_name
+	note: Equivalent to 'git branch new_branch_name' followed by 'git checkout new_branch_name'. Since these are the commands you would use to make and switch to a new branch, it's nice that there is a one line version. This is also the command you would run if you were in a detached head state, made a new commit, and wanted to retain changes
 
 git log
+git log --graph --oneline master branch_from_master
 
 git status
 
 git diff
 git diff --staged
-git diff commitID1 commitID2
+git diff commitID_1 commitID_2
 
 git add
 
 git commit
+
+git branch
+git branch new_branch_name
 
 git config --global user.name "David Shope"
 git config --global user.email "your_email@example.com"
