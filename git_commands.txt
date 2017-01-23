@@ -62,6 +62,10 @@ git push origin master
 
 	note: push takes two arguments - the remote you want to send changes to and the name of the local branch you'd like to push (by default, branch on remote will have the same name as branch pushed). Also, while this command updates the local repository, it also updates the local branch to point to the new commit if it is the one currently checked out.
 
+git push --set-upstream origin master
+
+	note: these options allow remote origin's master branch to be assigned as the upstream branch to the local master branch
+
 git fetch origin
 
 git pull origin master
