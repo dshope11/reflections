@@ -23,3 +23,8 @@ How would you collaborate without using Git or GitHub? What would be easier, and
 	I would probably still be using svn ;) but without any version control, I would have to send files independently like in the beginning of the lecture, which would not be ideal.
 
 	I don't know if there is anything that would be easier - I guess the learning curve would be a bit less!
+
+When would you want to make changes in a separate branch rather than directly in master? What benefits does each approach have?
+
+	When you want others to review your work first before entering it into the master branch, you might want to make changes in a separate branch first.
+	If you are making changes which you know are small and don't affect anything, then maybe making the changes directly in the master branch is ok. It would certainly be faster - but I now think that one should always err on the side of branch.
