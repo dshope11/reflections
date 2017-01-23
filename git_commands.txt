@@ -38,6 +38,24 @@ git branch -d coins
 
 	note: deleting a branch only deletes the label. Of course if the deleted branch hasn't been merged with another, the commits starting from the branch point will be effectively lost.
 
+git remote
+
+	note: like branch command, but for viewing remote repositories
+
+git remote add origin git@github.com:dshope11/reflections.git
+
+	note: to add remote repositories
+
+git remote -v
+
+	note: v for verbose (to show urls)
+
+git remote rm remote_URL
+
+git push origin master
+
+	note: push takes two arguments - the remote you want to send changes to and the name of the local branch you'd like to push (by default, branch on remote will have the same name as branch pushed)
+
 git merge branch2 branch3
 git merge --abort
 
@@ -52,3 +70,11 @@ git config --global user.email "your_email@example.com"
 git config --global core.editor "subl -n -w"
 git config --global push.default upstream
 git config --global merge.conflictstyle diff3
+
+git credential-osxkeychain
+
+	note: use to see if osxkeychain is already installed. For Mac only!
+
+git config --global credential.helper osxkeychain
+
+	note: to tell git to use osxkeychain helper to remember your password when talking with GitHub
