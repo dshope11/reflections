@@ -2,6 +2,12 @@ git init
 
 git clone
 
+	note: cloning a repository just means to make a copy of one. This can either be done from github to your local machine, or you can even clone a local directory into another local area. Git automatically sets up a remote pointing to the repository you cloned from
+
+	forking: only makes sense in the context of GitHub (or similar tools) in which the site makes a clone of a repository, but references original repository to save space and makes it easier to suggest changes for the original repository
+
+	To add others as collaborators to your repository on GitHub, go to settings -> collaborators and then adding their GitHub username
+
 git checkout
 git checkout master
 git checkout -b new_branch_name
