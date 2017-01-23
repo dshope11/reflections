@@ -76,6 +76,9 @@ git pull origin master
 
 	git pull origin master = git fetch origin; git merge master origin/master;
 
+	Try and only make changes to origin/master via pull requests so that everyone can see the changes!
+	also, TODO: try and implement continuous integration with QFramework by running tests automatically!
+
 git merge branch2 branch3
 git merge --abort
 
