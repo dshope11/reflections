@@ -62,9 +62,15 @@ git push origin master
 
 	note: push takes two arguments - the remote you want to send changes to and the name of the local branch you'd like to push (by default, branch on remote will have the same name as branch pushed). Also, while this command updates the local repository, it also updates the local branch to point to the new commit if it is the one currently checked out.
 
+git fetch origin
+
 git pull origin master
 
+	note: what actually happens with a git pull is that the remote branch gets fetched (updating the local copy of the remote branch) then that branch gets merged into the local one
 
+	or
+
+	git pull origin master = git fetch origin; git merge master origin/master;
 
 git merge branch2 branch3
 git merge --abort
