@@ -54,7 +54,11 @@ git remote rm remote_URL
 
 git push origin master
 
-	note: push takes two arguments - the remote you want to send changes to and the name of the local branch you'd like to push (by default, branch on remote will have the same name as branch pushed)
+	note: push takes two arguments - the remote you want to send changes to and the name of the local branch you'd like to push (by default, branch on remote will have the same name as branch pushed). Also, while this command updates the local repository, it also updates the local branch to point to the new commit if it is the one currently checked out.
+
+git pull origin master
+
+
 
 git merge branch2 branch3
 git merge --abort
