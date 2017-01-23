@@ -14,6 +14,9 @@ git log --stat
 	note: stat option shows which files were changed in each commit
 
 git log --graph --oneline master branch_from_master
+git log -n1
+
+	note: -n1 only shows most recent commit
 
 git status
 
