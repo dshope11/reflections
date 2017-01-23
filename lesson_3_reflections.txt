@@ -17,3 +17,9 @@ Describe the differences between forks, clones, and branches. When would you use
 What is the benefit of having a copy of the last known state of the remote stored locally?
 
 	This allows you to always know what changes you have made to your code have not been published yet. It also allows you to have a copy of the remote version locally, even if there is a conflict between it and your current branch.
+
+How would you collaborate without using Git or GitHub? What would be easier, and what would be harder?
+
+	I would probably still be using svn ;) but without any version control, I would have to send files independently like in the beginning of the lecture, which would not be ideal.
+
+	I don't know if there is anything that would be easier - I guess the learning curve would be a bit less!
