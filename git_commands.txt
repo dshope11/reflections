@@ -40,7 +40,7 @@ git branch -d coins
 
 git remote
 
-	note: like branch command, but for viewing remote repositories
+	note: like branch command, but for viewing remotes (a remote in the local repository is basically a reference to another repository)
 
 git remote add origin git@github.com:dshope11/reflections.git
 
