@@ -5,3 +5,11 @@ When would you want to use a remote repository rather than keeping all your work
 Why might you want to always pull changes manually rather than having Git automatically stay up-to-date with your remote repository?
 
 	Similarly with git allowing you to choose when to commit, pulling changes manually allows you power to only share commits which are ready to become public
+
+Describe the differences between forks, clones, and branches. When would you use one instead of another?
+
+	-branches allow you to create distinct "path" in your commit history and allow you to access specific commits by name
+
+	-forks are used by (and in the context of) GitHub to clone one repository from another so that the new repository refers back to the old one and it becomes easier to suggest changes to the original repository
+
+	-cloning a repository allows you to make a copy of a repository with complete commit history present
