@@ -41,6 +41,8 @@ git log -n1
 
 	note: -n1 only shows most recent commit
 
+git log --oneline -5 --author dshope --before "Wed Jan 25 2017"
+
 git status
 
 git diff
@@ -144,6 +146,7 @@ white="\[\033[1;37m\]"
 reset="\[\033[0m\]"
 export PS1="$lightgrey[\u@\h$white\$(__git_ps1) $lightgrey\W]\$ $reset"
 
+############################
 ## ASG Git Tutorial Notes ##
 
 -git uses 160-bit (SHA-1) hashes to point to a given state of your repository
@@ -192,3 +195,22 @@ git stash pop
 git cherry-pick hash
 	to apply a commit on top of your current branch
 	Note: there is now a new commit hash corresponding to a new commit (different parent and different time) since the state is different (thus different hashes)
+
+######################
+## git commit notes ##
+http://chris.beams.io/posts/git-commit/
+
+.mailmap file
+
+A git commit message should always be able to complete the following sentence:
+If applied, this commit will ___
+
+The seven rules of a great git commit message
+	1. Separate subject from body with a blank line
+	2. Limit the subject line to 50 characters
+	3. Capitalize the subject line
+	4. Do not end the subject line with a period
+	5. Use the imperative mood in the subject line
+	6. Wrap the body at 72 characters
+	7. Use the body to explain what and why vs. how
+	
