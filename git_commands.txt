@@ -101,3 +101,16 @@ git credential-osxkeychain
 git config --global credential.helper osxkeychain
 
 	note: to tell git to use osxkeychain helper to remember your password when talking with GitHub
+
+# Enable tab completion in git
+source ~/git-completion.bash
+
+# Change command prompt
+source ~/git-prompt.sh
+export GIT_PS1_SHOWDIRTYSTATE=1
+# '\$(__git_ps1)' adds git-related stuff
+
+lightgrey="\[\033[0;37m\]"
+white="\[\033[1;37m\]"
+reset="\[\033[0m\]"
+export PS1="$lightgrey[\u@\h$white\$(__git_ps1) $lightgrey\W]\$ $reset"
