@@ -8,11 +8,28 @@ git clone
 
 	To add others as collaborators to your repository on GitHub, go to settings -> collaborators and then adding their GitHub username
 
+git clone url name_of_local_repo
+
 git checkout
+
+	note: git checkout shapes your working copy by checking out things from the (local) git repository, but it's a Swiss knife, and can do lots of things, including discarding changes you did (so use it wisely). It mostly serves the purpose of switching to other branches, but also to undo changes to your working copy w.r.t the current branch.
+
+	Also, note that when moving to another branch, if the target branch has a different content for a modified file, you will be prevented from moving to the other branch (and will need to checkout or commit your changes first)
+
+	TODO: 'git co branch' seems to both switch to a new branch and set up the branch to track the remote branch of the same name
+
 git checkout master
 git checkout -b new_branch_name
 
 	note: Equivalent to 'git branch new_branch_name' followed by 'git checkout new_branch_name'. Since these are the commands you would use to make and switch to a new branch, it's nice that there is a one line version. This is also the command you would run if you were in a detached head state, made a new commit, and wanted to retain changes
+
+git checkout path
+
+	note: moves your working copy to represent the state of the current branch (also HEAD). This use of checkout WILL delete any changes you may have locally (under that path)
+
+	git checkout my-new-feature
+	git checkout .
+	-will move to the my-new-feature branch and delete any changes made to the working copy
 
 git log
 git log --stat
@@ -29,6 +46,7 @@ git status
 git diff
 git diff --staged
 git diff commitID_1 commitID_2
+git diff path
 
 git show commitID1
 
@@ -44,6 +62,10 @@ git branch -d coins
 
 	note: deleting a branch only deletes the label. Of course if the deleted branch hasn't been merged with another, the commits starting from the branch point will be effectively lost.
 
+git branch -av
+
+	note: to display the known branches, local and remote (from -a) and with the hash they point to (with -v)
+
 git remote
 
 	note: like branch command, but for viewing remotes (a remote in the local repository is basically a reference to another repository)
@@ -54,7 +76,7 @@ git remote add origin git@github.com:dshope11/reflections.git
 
 git remote -v
 
-	note: v for verbose (to show urls)
+	note: v for verbose (to show urls), also available for branch command
 
 git remote rm remote_URL
 
@@ -64,7 +86,7 @@ git push origin master
 
 git push --set-upstream origin master
 
-	note: these options allow remote origin's master branch to be assigned as the upstream branch to the local master branch
+	note: these options allow remote origin's master branch to be assigned as the upstream branch to the local master branch (-u option also works)
 
 git fetch origin
 
@@ -94,6 +116,13 @@ git config --global core.editor "subl -n -w"
 git config --global push.default upstream
 git config --global merge.conflictstyle diff3
 
+To create git aliases:
+	git config --global alias.co checkout
+
+	Now, in ~/.gitconfig,
+	[alias]
+		co = checkout
+
 git credential-osxkeychain
 
 	note: use to see if osxkeychain is already installed. For Mac only!
@@ -114,3 +143,52 @@ lightgrey="\[\033[0;37m\]"
 white="\[\033[1;37m\]"
 reset="\[\033[0m\]"
 export PS1="$lightgrey[\u@\h$white\$(__git_ps1) $lightgrey\W]\$ $reset"
+
+## ASG Git Tutorial Notes ##
+
+-git uses 160-bit (SHA-1) hashes to point to a given state of your repository
+-even if from different repositories, a given hash points to the same content
+
+-local repo is located under a folder named .git in your working copy
+
+-HEAD is a reference to the hash describing the current status
+
+-master is a branch (also a reference) that is canonically used to refer to the main branch (like the trunk in SVN)
+
+-kerberos works from lxplus
+
+Recipe for keeping your fork of the atlas offline repo up-to-date:
+git rebase upstream/master
+git status
+git push origin
+
+	Note: ideally you only need to fetch and use upstream/branch, but if you want to update your fork, you can use the above procedure, or in case you know you haven't done new development on your branch (but the upstream side has), you can run git merge upstream/master
+
+git rebase
+
+	note: to replay your local changes on top of another hash and update the current branch pointer to that state
+
+About interacting with remote git repos:
+	local and remote branch references do not always match: e.g., if somebody committed to upstream/master and you run git fetch, your local master will differ from your upstream/master reference (before the fetch they would have been the same)
+
+	It is therefore important to use fetch often (there's no harm), and use references with the explicit remote if you intend to use that state (and not rely on whether you updated your local pointer or not)
+
+git reset hash
+	to reset the current working directory to a given hash, preserving the changes one made (unless using the --hard option)
+	provides a way of undoing a commit
+	hash^N is a reference to the Nth parent of a hash (or reference)
+
+	hash~N is the range of commits from the Nth before hash up to hash (useful to provide arguments to git diff)
+
+git stash
+	to interact with the stash, a place to temporarily save your changes away (cleaning up your working copy)
+	This is an alternative to committing or checking out changes
+git stash list
+	to list available stashes
+git stash pop
+	to replay the changes in your stash on top of your HEAD (and delete the stash)
+	Note: you may have to resolve conflicts when you pop the stash if you've drifted too far away from the branch where the stash was saved
+
+git cherry-pick hash
+	to apply a commit on top of your current branch
+	Note: there is now a new commit hash corresponding to a new commit (different parent and different time) since the state is different (thus different hashes)
