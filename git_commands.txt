@@ -23,6 +23,9 @@ git checkout -b new_branch_name
 
 	note: Equivalent to 'git branch new_branch_name' followed by 'git checkout new_branch_name'. Since these are the commands you would use to make and switch to a new branch, it's nice that there is a one line version. This is also the command you would run if you were in a detached head state, made a new commit, and wanted to retain changes
 
+git checkout -b new_branch_name origin/master
+	new_branch_name is set to track origin/master
+
 git checkout path
 
 	note: moves your working copy to represent the state of the current branch (also HEAD). This use of checkout WILL delete any changes you may have locally (under that path)
@@ -57,9 +60,12 @@ git show commitID1
 git add
 
 git commit
+git commit --amend
+	change the current commit
 
 git branch
 git branch new_branch_name
+git branch new_branch_name BranchoffHash
 git branch -d coins
 
 	note: deleting a branch only deletes the label. Of course if the deleted branch hasn't been merged with another, the commits starting from the branch point will be effectively lost.
@@ -67,6 +73,12 @@ git branch -d coins
 git branch -av
 
 	note: to display the known branches, local and remote (from -a) and with the hash they point to (with -v)
+
+git branch -f master HEAD~3
+	forces master to point to the commit which is 3 before the currently checked out commit
+
+git branch -u origin/master foo
+	sets the foo branch to track origin/master. If foo is currently checked out, you can even leave it off the end
 
 git remote
 
@@ -84,13 +96,48 @@ git remote rm remote_URL
 
 git push origin master
 
-	note: push takes two arguments - the remote you want to send changes to and the name of the local branch you'd like to push (by default, branch on remote will have the same name as branch pushed). Also, while this command updates the local repository, it also updates the local branch to point to the new commit if it is the one currently checked out.
+	git push <remote> <place>
+	note: push optionally takes two arguments - the remote you want to send changes to and the name of the local branch you'd like to push (by default, branch on remote will have the same name as branch pushed). Also, while this command updates the local repository, it also updates the local branch to point to the new commit if it is the one currently checked out.
+
+	this command translates to this in English:
+
+	Go to the branch named "master" in my repository, grab all the commits, and then go to the branch "master" on the remote named "origin." Place whatever commits are missing on that branch and then tell me when you're done.
+
+	By specifying master as the "place" argument, we told git where the commits will come from and where the commits will go. It's essentially the "place" or "location" to synchronize between the two repositories.
+
+	Keep in mind that since we told git everything it needs to know (by specifying both arguments), it totally ignores where we are checked out!
+
+	also, more advanced:
+	git push origin <source>:<destination>
+	e.g.
+	git push origin foo:bar
+		Allows you to specify the foo source branch to get pushed to the bar destination on origin (even if bar doesn't exist on the remote, git will create it automatically)
+		<source>:<destination> is commonly refered to as a colon refspec (fancy name for a location that git can figure out, like the branch foo or even just HEAD~1
+
+	also, there exists the concept of pushing "nothing" to a remote branch by not specifying a source:
+		git push origin :foo
+	This actually deletes the foo branch on the remote! (kind of makes sense)
 
 git push --set-upstream origin master
 
 	note: these options allow remote origin's master branch to be assigned as the upstream branch to the local master branch (-u option also works)
 
+	you can think of git push as publishing your work!
+
+git fetch
+
+	downloads the commits that the remote has but are missing from our local repository, and
+	updates where our remote branches point (for instance, origin/master)
+	-essentially brings our local representation of the remote repository into synchronization with what the actual remote repository looks like (right now).
+	-git fetch, however, does not change anything about your local state. It will not update your master branch or change anything about how your file system looks right now (that's what git pull is for!)
+	-think of git fetch as a download step
+
 git fetch origin
+
+	also, more advanced:
+	git fetch origin <source>:<destination> works as well, but not commonly used. Here, source is on remote and destination is local (remote branches don't get updated since you specified a destination for the fetch. Not often used, because in the default case the destination is just the remote branch stored locally (and it gets updated, which is usually what you want)
+
+	fetching "nothing" to a place locally actually makes a new branch
 
 git pull origin master
 
@@ -98,10 +145,22 @@ git pull origin master
 
 	or
 
-	git pull origin master = git fetch origin; git merge master origin/master;
+	'git pull origin master' = 'git fetch origin; git merge master origin/master;''
+	
+	also,
+	'git pull --rebase' = 'git fetch; git rebase;'
 
 	Try and only make changes to origin/master via pull requests so that everyone can see the changes!
 	also, TODO: try and implement continuous integration with QFramework by running tests automatically!
+
+	also, more advanced:
+	with refspec known for fetch and push, pull is just the following:
+	
+		'git pull origin foo' = 'git fetch origin foo; git merge o/foo'
+
+		and
+
+		'git pull origin bar~1:bugFix' = 'git fetch origin bar~1:bugFix; git merge bugFix'
 
 git merge branch2 branch3
 git merge --abort
@@ -112,11 +171,23 @@ git merge --abort
 
 	Also, since the two branches are merged, the order in which they are typed into the command line does not matter. The key is to remember that git merge always merges all the specified branches into the currently checked out branch, creating a new commit for that branch.
 
+git config --list
+	To see that user name and email are set properly
+
 git config --global user.name "David Shope"
 git config --global user.email "your_email@example.com"
 git config --global core.editor "subl -n -w"
+
+*important!
 git config --global push.default upstream
+
 git config --global merge.conflictstyle diff3
+
+git config --global push.default simple
+	make some operations more straightforward
+
+git config --global http.postBuffer 209715200
+	work around an error when adding big files to git
 
 To create git aliases:
 	git config --global alias.co checkout
@@ -171,6 +242,10 @@ git rebase
 
 	note: to replay your local changes on top of another hash and update the current branch pointer to that state
 
+git rebase -i HEAD~4
+
+	Opens an interactive rebase window to rebase while choosing the order of commits and even whether to combine or remove commits
+
 About interacting with remote git repos:
 	local and remote branch references do not always match: e.g., if somebody committed to upstream/master and you run git fetch, your local master will differ from your upstream/master reference (before the fetch they would have been the same)
 
@@ -179,9 +254,7 @@ About interacting with remote git repos:
 git reset hash
 	to reset the current working directory to a given hash, preserving the changes one made (unless using the --hard option)
 	provides a way of undoing a commit
-	hash^N is a reference to the Nth parent of a hash (or reference)
-
-	hash~N is the range of commits from the Nth before hash up to hash (useful to provide arguments to git diff)
+	hash~N is a reference to the Nth parent of a hash (or reference)
 
 git stash
 	to interact with the stash, a place to temporarily save your changes away (cleaning up your working copy)
@@ -213,4 +286,58 @@ The seven rules of a great git commit message
 	5. Use the imperative mood in the subject line
 	6. Wrap the body at 72 characters
 	7. Use the body to explain what and why vs. how
-	
+
+############################################
+## Notes from ATLAS git workflow tutorial ##
+https://atlassoftwaredocs.web.cern.ch/gittutorial/
+
+
+##################################
+## Notes from learngitbranching ##
+http://learngitbranching.js.org/
+
+Branches are extremely lightweight in git - they are just pointers to a specific commit, nothing more!
+(no storage, memory overhead)
+	hence the mantra "branch early, branch often"
+
+HEAD is just a symbolic name that stands for the commit that is currently checked out
+
+master^ is the parent of master
+master^^ is the grandparent of master
+	Travel back in time with HEAD^!
+
+	an argument after ^ will specify which parent commit to trace back to (e.g. simple merge commits have 2 parents, so git checkout HEAD^2 would checkout the commit that just got merged)
+
+	you can even chain ~ and ^ together: starting at C7, 'git checkout HEAD~^2~2'would take you to c1 in the following diagram:
+
+	C0		C1
+	|		|
+	|		|
+	C2 		C3
+	|		|
+	|		|
+	C4		C5
+	|     /
+	|   /
+	C6
+	|
+	|
+	C7 *
+
+
+git revert
+	allows you to reverse changes made by a commit but share it with others in a safe way by creating a new commit with the reverse applied. (git reset accomplishes this similarly, but rewrites history)
+
+git tag tagName Hash
+
+	Branches are easily mutated, often temporary, and always changing. Tags are meant to be more permanent than branches and are a way of marking certain commits from e.g. major releases and big merges. You can't "check out" a tag and then complete work on that tag -- tags exist as anchors in the commit tree that designate certain spots.
+
+git describe Hash
+
+	provides how far in history the most recent tag is located.
+	Output takes the form Tag_n_Hash
+
+Social coding:
+	-remote branches keep track of the state of remote repositories (since last update)
+	-remote branches have a naming convention: <remote name> / <branch name>
+	-if you checkout a remote branch and make a commit, the remote branch won't update to the new commit: this is because it only updates when the remote (repo) updates
