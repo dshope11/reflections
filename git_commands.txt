@@ -291,6 +291,23 @@ The seven rules of a great git commit message
 ## Notes from ATLAS git workflow tutorial ##
 https://atlassoftwaredocs.web.cern.ch/gittutorial/
 
+for CI of aogt8, must give atlasbot access as Developer to your project:
+	Project Settings -> Members
+
+.gitignore:
+
+	# Ignore the most common extra files that can
+	# be produced while developing
+	*~
+	*.sw?
+	#*
+	.DS_Store
+	.pydevproject
+	.project
+	*.pyc
+
+Full checkout: gives you access to working copies of all files. Very much the standard way of doing things
+Sparse checkout: gives you only the parts of the repository you want to update. ('git atlas' wrapper is provided to make this easier)
 
 ##################################
 ## Notes from learngitbranching ##
