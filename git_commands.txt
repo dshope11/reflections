@@ -291,6 +291,15 @@ The seven rules of a great git commit message
 ## Notes from ATLAS git workflow tutorial ##
 https://atlassoftwaredocs.web.cern.ch/gittutorial/
 
+Current shell environment setup:
+	ssh lxplus
+	setupATLAS
+	lsetup git
+	asetup AtlasExternals,21.0.9
+	source /afs/cern.ch/atlas/software/builds/nightlies/Athena-21.0.X-VAL/Athena/rel_1/InstallArea/x86_64-slc6-gcc49-opt/setup.sh
+
+	note: Athena-21.0.X-VAL doesn't currently exist!
+
 for CI of aogt8, must give atlasbot access as Developer to your project:
 	Project Settings -> Members
 
@@ -327,7 +336,7 @@ Sparse build:
 	make -j
 
 	(maybe put package_filters.txt in a directory outside build so that you can rm -rf * your build area, just not in the git repo so thaty you don't commit it by mistake)
-	
+
 
 ##################################
 ## Notes from learngitbranching ##
@@ -378,3 +387,6 @@ Social coding:
 	-remote branches keep track of the state of remote repositories (since last update)
 	-remote branches have a naming convention: <remote name> / <branch name>
 	-if you checkout a remote branch and make a commit, the remote branch won't update to the new commit: this is because it only updates when the remote (repo) updates
+
+##################################
+## atlassian git tutorial notes ##
