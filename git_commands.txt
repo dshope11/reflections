@@ -306,8 +306,28 @@ for CI of aogt8, must give atlasbot access as Developer to your project:
 	.project
 	*.pyc
 
+'lsetup git' is needed to set up a more recent version of git so that the push.default simple is recognized
+	Also, to get the git prompt info to work, lsetup git is needed as well!
+
 Full checkout: gives you access to working copies of all files. Very much the standard way of doing things
+
 Sparse checkout: gives you only the parts of the repository you want to update. ('git atlas' wrapper is provided to make this easier)
+	clones a copy of remote as a sparse checkout of the master branch (but you'll still have a complete copy of the repository inside the local repo .git)
+
+	https://atlassoftwaredocs.web.cern.ch/gittutorial/git-atlas/ for more info
+
+Sparse build:
+	After setting up AtlasExternals as a baseline athena release from the tutorial start, if you ran the normal cmake; make cycle you would rebuild the entire offline release.
+	This would take a long time and it's almost certainly not what you want. instead you only want to rebuild part of the release. alternatively,
+
+	mkdir ../build && cd ../build
+	cp ../aogt8/Projects/AthenaWorkDir/package_filters.txt .
+	EDITOR package_filters.txt
+	cmake -DATLAS_PACKAGE_FILTER_FILE=package_filters.txt ../aogt8/Projects/AthenaWorkDir
+	make -j
+
+	(maybe put package_filters.txt in a directory outside build so that you can rm -rf * your build area, just not in the git repo so thaty you don't commit it by mistake)
+	
 
 ##################################
 ## Notes from learngitbranching ##
