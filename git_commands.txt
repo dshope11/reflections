@@ -415,4 +415,15 @@ Each repo on bitbucket has a 2 GB size limit, but recommended not to exceed 1 GB
 
 ############## Beginner
 
+### What Is Version Control ###
+
+### What Is Git ###
+
+All objects in a git repo are are secured with a cryptographically secure hashing algorithm called SHA1 (protects against both accidental and malicious change and ensures that the history is fully traceable)
+
+### Why Git For Your Organization ###
+
+### Install Git ###
+
+
 
