@@ -59,7 +59,10 @@ git show commitID1
 
 git add
 
+	moves changes from the working directory to the Git staging area. The staging area is where you prepare a snapshot of a set of changes before committing them to the official history (in local directory)
+
 git commit
+git commit -m "commit message"
 git commit --amend
 	change the current commit
 
@@ -138,6 +141,10 @@ git fetch origin
 	git fetch origin <source>:<destination> works as well, but not commonly used. Here, source is on remote and destination is local (remote branches don't get updated since you specified a destination for the fetch. Not often used, because in the default case the destination is just the remote branch stored locally (and it gets updated, which is usually what you want)
 
 	fetching "nothing" to a place locally actually makes a new branch
+
+git pull --all
+
+	command to pull all changes
 
 git pull origin master
 
@@ -342,7 +349,7 @@ Sparse build:
 ## Notes from learngitbranching ##
 http://learngitbranching.js.org/
 
-Branches are extremely lightweight in git - they are just pointers to a specific commit, nothing more!
+Branches are extremely lightweight in git - they are just pointers to a specific commit, nothing more! When you create a new branch, all git needs to do is create a new pointer - it doesn't create a whole new set of folders or files
 (no storage, memory overhead)
 	hence the mantra "branch early, branch often"
 
@@ -388,5 +395,24 @@ Social coding:
 	-remote branches have a naming convention: <remote name> / <branch name>
 	-if you checkout a remote branch and make a commit, the remote branch won't update to the new commit: this is because it only updates when the remote (repo) updates
 
+
+
+
+
+
 ##################################
 ## atlassian git tutorial notes ##
+##################################
+https://www.atlassian.com/git/tutorials
+
+############## Learn Git
+
+### Learn Git With Bitbucket Cloud ###
+
+Each repo on bitbucket has a 2 GB size limit, but recommended not to exceed 1 GB (atlasoff is ~700 MB)
+
+### Learn About Code Review In Bitbucket Cloud ###
+
+############## Beginner
+
+
