@@ -1,6 +1,13 @@
 git init
+git init <directory>
+	Create an empty Git repository in the specified directory. Running this command will create a new folder called directory containing nothing but the .git subdirectory.
+git init --bare <directory>
+	Initialize an empty Git repository, but omit the working directory. Shared repositories should always be created with the --bare flag. Conventionally, repositories initialized with the --bare flag end in .git. For example, the bare version of a repository called my-project should be stored in a directory called my-project.git.
+	Central repositories should always be created as bare repositories because pushing branches to a non-bare repository has the potential to overwrite changes. Think of --bare as a way to mark a repository as a storage facility, as opposed to a development environment. This means that for virtually all Git workflows, the central repository is bare, and the developers local repositories are non-bare.
 
 git clone
+
+	The git clone command copies an existing Git repository. This is sort of like svn checkout, except the "working copy" is a fully-fledged Git repository - it has its own history, manages its own files, and is a completely isolated environment from the original repository. Unlike SVN, Git makes no distinction between the working copy and the central repository - they are all fully-fledged Git repositories.
 
 	note: cloning a repository just means to make a copy of one. This can either be done from github to your local machine, or you can even clone a local directory into another local area. Git automatically sets up a remote pointing to the repository you cloned from
 
@@ -34,6 +41,10 @@ git checkout path
 	git checkout .
 	-will move to the my-new-feature branch and delete any changes made to the working copy
 
+git checkout <commit> <file>
+
+	Checkout a previous version of a file. This turns the <file> that resides in the working directory into an exact copy of the one from <commit> and adds it to the staging area
+
 git log
 git log --stat
 
@@ -44,9 +55,31 @@ git log -n1
 
 	note: -n1 only shows most recent commit
 
+git log --grep="<pattern>"
+
+	search for commits with a commit message that matches <pattern>
+
+git log <since>..<until>
+
+	shows only commits that occur between <since> and <until>. Both can either be a commit ID, a branch name, HEAD, or any other kind of revision reference.
+
+git log <file>
+
+	only display commits that include the specified file
+
 git log --oneline -5 --author dshope --before "Wed Jan 25 2017"
 
+git log --graph --decorate --oneline
+
+git log -p
+
+	Display the patch representing each commit (shows full diff of each commit, most detailed view of history)
+
+git log --author="John Smith" -p hello.py
+
 git status
+
+	View the state of the working directory and staging area
 
 git diff
 git diff --staged
@@ -61,10 +94,44 @@ git add
 
 	moves changes from the working directory to the Git staging area. The staging area is where you prepare a snapshot of a set of changes before committing them to the official history (in local directory)
 
+	The git add command should not be confused with svn add, which adds a file to the repository. Instead, git add works on the more abstract level of "changes". This means that git add needs to be called every time you alter a file and you want to commit it, whereas svn add only needs to be called once for each file. It may sound redundant, but this workflow makes it much easier to keep a project organized and only commit exactly what you desire!
+
+git add -p
+
+	Begin an interactive staging session that lets you choose portions of a file to add to the next commit. This will present you with a chunk of changes and prompt you for a command. Use y to stage the chunk, n to ignore the chunk, s to split it into smaller chunks, e to manually edit the chunk, and q to exit.
+
+The Staging Area
+
+	It helps to think of it as a buffer between the working directory and the project history.
+	Instead of committing all of the changes you've made since the last commit, the stage lets you group related changes into highly focused snapshots before actually committing it to the project history. This means you can make all sorts of edits to unrelated files, then go back and split them up into logical commits by adding related changes to the stage and commit them piece-by-piece. As in any revision control system, it’s important to create atomic commits so that it’s easy to track down bugs and revert changes with minimal impact on the rest of the project.
+
+	Just as the staging area is a buffer between the working directory and the project history, each developer's local repository is a buffer between their contributions and the central repository.
+
 git commit
+
+	commits the staged snapshot from the staging area to the project history. While they share the same name, this command is nothing like svn commit. Snapshots are committed to the local repository, and this requires absolutely no interaction with other Git repositories (can even be done on an airplane with no internet connection)
+
 git commit -m "commit message"
+git commit -a
+
+	Commit a snapshot of all changes in the working directory. This only includes modifications to tracked files. Not advised, since it bypasses the staging area!
+
 git commit --amend
+
 	change the current commit
+	Never amend commits that have been pushed to a public repository! Amended commits are actually entirely new commits, and the previous commit is removed from the project history.
+	This has the same consequences as resetting a public snapshot. If you amend a commit that other developers have based their work on, it will look like the basis of their work vanished from the project history. This is a confusing situation for developers to be in and it’s complicated to recover from.
+
+	--no-edit flag will allow you to make amendment withough changing its commit message.
+
+git rm
+	delete a file from the repository
+git rm --cached
+	file will be deleted from the repository, but will remain in your working directory as an ignored file
+	e.g.
+	echo debug.log >> .gitignore
+	git rm --cached debug.log
+	git commit -m "Start ignoring debug.log"
 
 git branch
 git branch new_branch_name
@@ -178,6 +245,16 @@ git merge --abort
 
 	Also, since the two branches are merged, the order in which they are typed into the command line does not matter. The key is to remember that git merge always merges all the specified branches into the currently checked out branch, creating a new commit for that branch.
 
+git config
+
+	Git stores configuration options in three separate files, which lets you scope options to infividual repositories, users, or the entire system:
+
+		<repo>/.git/config - Repository-specific settings
+		~/.gitconfig - User-specific settings. This is where options set with the --global flag are stored.
+		$(prefix)/etc/gitconfig - System-wide settings.
+
+	When options in these files conflict, local settings override user settings, which override system-wide.
+
 git config --list
 	To see that user name and email are set properly
 
@@ -202,6 +279,11 @@ To create git aliases:
 	Now, in ~/.gitconfig,
 	[alias]
 		co = checkout
+
+	# Add some SVN-like aliases:
+	git config --global alias.st status
+	git config --global alias.br branch
+	git config --global alias.ci commit
 
 git credential-osxkeychain
 
@@ -245,32 +327,115 @@ git push origin
 
 	Note: ideally you only need to fetch and use upstream/branch, but if you want to update your fork, you can use the above procedure, or in case you know you haven't done new development on your branch (but the upstream side has), you can run git merge upstream/master
 
-git rebase
+git rebase <base>
+
+	Rebase the current branch onto <base>
 
 	note: to replay your local changes on top of another hash and update the current branch pointer to that state
+	Primary reason to do this is to maintain a linear project history.
+	Rebasing is a common way to integrate upstream changes into your local repo.
+	Pulling in upstream changes with git merge results in a superfluous merge commit every time you want to see how the project has progressed. On the other hand, rebasing is like saying, “I want to base my changes on what everybody has already done.”
+
+	Like with git commit --ammend and git reset, you should never rebase commits that have been pushed to a public repo for the same reasons. The rebase would replace the old commits with new ones, and it would look like that part of your project history abruptly vanished.
 
 git rebase -i HEAD~4
 
 	Opens an interactive rebase window to rebase while choosing the order of commits and even whether to combine or remove commits
+
+	Can be used to "polish" a feature branch before merging it into the main code base (delete obsolete ones, squash insignificant commits, etc.) so that to everyone else, it will look like the entire feature was developed in a singe series of well-planned commits.
 
 About interacting with remote git repos:
 	local and remote branch references do not always match: e.g., if somebody committed to upstream/master and you run git fetch, your local master will differ from your upstream/master reference (before the fetch they would have been the same)
 
 	It is therefore important to use fetch often (there's no harm), and use references with the explicit remote if you intend to use that state (and not rely on whether you updated your local pointer or not)
 
-git reset hash
-	to reset the current working directory to a given hash, preserving the changes one made (unless using the --hard option)
+git reset
+
+	Reset the staging area to match the most recent commit, but leaves the working directory unchanged. Unstages all files without overwriting any changes, giving you the opportunity to rebuild the staged snapshot from scratch.
+
+git reset <file>
+
+	git reset used most frequently to undo changes in the staging area and the work directory.
+	Removes the specified file from the staging area, but leave the working directory unchanged. This unstages a file without overwriting any changes.
+	
+	In any use case, reset should only be used to undo local changes - you should never reset snapshots that have been shared with other developers. The ensuing merge commit required to synchronize your repository with the remote is likely to confuse and frustrate your team.
+
+git reset --hard
+	
+	Reset the staging area and the working directory to match the most recent commit. In addition to unstaging changes, the --hard flag tells Git to overwrite all changes in the working directory, too. Put another way: this obliterates all uncommitted changes, so make sure you really want to throw away your local developments before using it.
+
+git reset <commit>
+	Move the current branch tip backward to <commit>, reset the staging area to match, but leave the working directory alone. All changes made since <commit> will reside in the working directory, which lets you re-commit the project history using cleaner, more atomic snapshots.
+
 	provides a way of undoing a commit
+	
 	hash~N is a reference to the Nth parent of a hash (or reference)
+
+	Careful! When you undo with git reset (and the commits are no longer referenced by any refs or the reflog), there is no way to retrieve the original copy - it is a permanent undo. Care must be taken when using this tool, as it's one of the only Git commands that has the potential to lose your work.
+
+git reset --hard <commit>
+	also a valid combination
+
+git clean
+
+	removes untracked files from your working directory.
+	Often executed in conjunction with git reset --hard (since git reset doesn't operate on untracked files)
+
+git clean -n
+
+	perform a "dry run" of git clean. Shows you which files will be removed without actually removing them
+
+git clean -f
+
+	required unless the clean.requireForce configuration is set to false (true by default).
+	Will NOT remove untracked folders or files specified by .gitignore.
+
+git clean -f <path>
+
+	limit clean to specified path
+
+git clean -df
+
+	also remove untracked directories
+
+git clean -xf
+
+	also removes any files that Git usually ignores
 
 git stash
 	to interact with the stash, a place to temporarily save your changes away (cleaning up your working copy)
+	(Stashes both staged and unstaged changes)
 	This is an alternative to committing or checking out changes
+	Stashing is handy if you need to quickly switch context and work on something else, but you're mid-way through a code change and aren't quite ready to commit.
+	(won't stash changes made to untracked or ignored files)
+	-p option will iterate through each changed "hunk" in your working copy and ask whether you wish to stash it
+	(hit ? for a full list of hunk commands)
 git stash list
 	to list available stashes
+	By default, stashes are identified simply as a "WIP" - work in progress - on top of the branch and commit that you created the stash from
+git stash show
+	view a summary of a stash (-p or --patch to view full diff of a stash)
 git stash pop
 	to replay the changes in your stash on top of your HEAD (and delete the stash)
 	Note: you may have to resolve conflicts when you pop the stash if you've drifted too far away from the branch where the stash was saved
+	re-apply the most recent by default
+git stash pop stash@{2}
+	reapply changes made by stash@{2}
+git stash apply
+	to reapply the changes to your working copy and keep them in your stash (if you want to apply the same stashed changes to multiple branches)
+git stash branch branch_name stash@{1}
+	creates a new branch to apply your stashed changes to
+git stash -u (or --include-untracked)
+	tells git to also stash your untracked files
+git stash -a
+	includes changes to untracked AND ignored files
+git stash save "message"
+	annotate your stashes with a description to provide a bit more context
+git stash drop stash@{1}
+	delete a stash
+git stash clear
+	delete all of your stashes
+
 
 git cherry-pick hash
 	to apply a commit on top of your current branch
@@ -290,7 +455,7 @@ The seven rules of a great git commit message
 	2. Limit the subject line to 50 characters
 	3. Capitalize the subject line
 	4. Do not end the subject line with a period
-	5. Use the imperative mood in the subject line
+	5. Use the imperative mood in the subject line (makes commit messages look more like actions)
 	6. Wrap the body at 72 characters
 	7. Use the body to explain what and why vs. how
 
@@ -311,7 +476,7 @@ for CI of aogt8, must give atlasbot access as Developer to your project:
 	Project Settings -> Members
 
 .gitignore:
-
+	https://www.atlassian.com/git/tutorials/gitignore (for ignore patterns and rules)
 	# Ignore the most common extra files that can
 	# be produced while developing
 	*~
@@ -321,6 +486,11 @@ for CI of aogt8, must give atlasbot access as Developer to your project:
 	.pydevproject
 	.project
 	*.pyc
+git add -f
+	forces an ignored file to be staged (better though to simply define an ignore exception in .gitignore)
+git check-ignore -v
+	determine which pattern is causing a particular file to be ignored.
+	You can pass multiple file names to git check-ignore if you like, and the names themselves don't even have to correspond to files that exist in your repository.
 
 'lsetup git' is needed to set up a more recent version of git so that the push.default simple is recognized
 	Also, to get the git prompt info to work, lsetup git is needed as well!
@@ -381,6 +551,8 @@ master^^ is the grandparent of master
 git revert
 	allows you to reverse changes made by a commit but share it with others in a safe way by creating a new commit with the reverse applied. (git reset accomplishes this similarly, but rewrites history)
 
+	Also, git reset can only work backwards from the current commit - e.g. if you wanted to undo an old commit with git reset, you would have to remove all commits that occurred after the target commit, remove it, then re-commit all of the subsequent commits. git revert is able to target an individual commit at an arbitrary point in the history.
+
 git tag tagName Hash
 
 	Branches are easily mutated, often temporary, and always changing. Tags are meant to be more permanent than branches and are a way of marking certain commits from e.g. major releases and big merges. You can't "check out" a tag and then complete work on that tag -- tags exist as anchors in the commit tree that designate certain spots.
@@ -419,11 +591,39 @@ Each repo on bitbucket has a 2 GB size limit, but recommended not to exceed 1 GB
 
 ### What Is Git ###
 
-All objects in a git repo are are secured with a cryptographically secure hashing algorithm called SHA1 (protects against both accidental and malicious change and ensures that the history is fully traceable)
+All objects in a git repo are are secured with a cryptographically secure hashing algorithm called SHA1 (protects against both accidental and malicious change and ensures that the history is fully traceable). If it was ever corrupted, the commit would generate a different ID.
 
 ### Why Git For Your Organization ###
 
 ### Install Git ###
 
+############## Getting Started
 
+### Setting Up A Repository ###
+
+Unlike SVN, Git doesn't require a .git folder in every subdirectory
+
+### Saving Changes ###
+
+### Inspecting A Repository ###
+
+### Undoing Changes ###
+
+### Rewriting History ###
+
+The git reflog
+
+	Git keeps track of updates to the tip of branches using a mechanism called reflog. This allows you to go back to changesets even though they are not referenced by any branch or tag.
+
+git reflog
+
+	show the reflog for the local repository. Every time the current HEAD gets updated (by switching branches, pulling in new changes, rewriting history or simply by adding new commits) a new entry will be added to the reflog. 
+
+git reflog --relative-date
+
+	show the reflog with relative date information (e.g. 2 weeks ago).
+
+############## Collaborating
+
+### git remote ###
 
